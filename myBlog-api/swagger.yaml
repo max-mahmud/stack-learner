@@ -1,0 +1,926 @@
+---
+openapi: 3.0.0
+info:
+  title: First MyBlog API
+  description: "-This is the first professional API created by NEWMAHMUD24 for MyBlog application. \nThe API provides endpoints for managing articles, comments, and authors within the MyBlog platform.\nIt allows users to retrieve articles, create new articles, and interact with comments.\n"
+  contact:
+    name: NEWMAHMUD24
+    url: https://yourwebsite.com
+    email: your_email@example.com
+  version: "1"
+servers:
+- url: https://virtserver.swaggerhub.com/NEWMAHMUD24/first-my-blog/1
+  description: SwaggerHub API Auto Mocking
+- url: http://localhost:4000/api/v1
+  description: Prod Mode
+- url: http://localhost:4000/api/v1
+  description: DEV Mode
+tags:
+- name: Auth
+  description: Auth EndPoints (public)
+- name: Article
+  description: Article Endpoints (public + private)
+- name: Comments
+  description: Comment EndPoints (private)
+- name: User
+  description: User EndPoints (admin only)
+paths:
+  /auth/signup:
+    post:
+      tags:
+      - Auth
+      description: create a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/auth_signup_body'
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_201'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /auth/signin:
+    post:
+      tags:
+      - Auth
+      description: Sign in a user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/auth_signin_body'
+      responses:
+        "200":
+          description: User authenticated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /articles:
+    get:
+      tags:
+      - Article
+      description: Get all articles
+      parameters:
+      - name: page
+        in: query
+        description: The current page number
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        description: The number of objects to return
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 10
+      - name: sortBy
+        in: query
+        description: Sort by ascending or descending (date)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: dsc
+          enum:
+          - asc
+          - dsc
+      - name: search
+        in: query
+        description: Return the filtered articles
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+    post:
+      tags:
+      - Article
+      description: Create a new article
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/articles_body'
+        required: true
+      responses:
+        "201":
+          description: Article created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_201_1'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+      security:
+      - bearerAuth: []
+  /articles/{id}:
+    get:
+      tags:
+      - Article
+      description: get single article
+      parameters:
+      - name: id
+        in: path
+        description: Article ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "1"
+      - name: expand
+        in: query
+        description: expand author and comment object
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "author, comment"
+      responses:
+        "200":
+          description: Article view
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_2'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+    put:
+      tags:
+      - Article
+      description: Update an article (replace)
+      parameters:
+      - name: id
+        in: path
+        description: Article ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "1"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/article'
+        required: true
+      responses:
+        "200":
+          description: Updated Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_3'
+        "201":
+          description: Created Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_3'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+      security:
+      - bearerAuth: []
+    delete:
+      tags:
+      - Article
+      description: Delete an article
+      parameters:
+      - name: id
+        in: path
+        description: Article ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "1"
+      responses:
+        "204":
+          description: Article deleted successfully
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+      security:
+      - bearerAuth: []
+    patch:
+      tags:
+      - Article
+      description: Update an article (partial update)
+      parameters:
+      - name: id
+        in: path
+        description: Article ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "1"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/articles_id_body'
+        required: true
+      responses:
+        "200":
+          description: Article updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_3'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+      security:
+      - bearerAuth: []
+  /articles/{id}/comment:
+    post:
+      tags:
+      - Comments
+      description: Create a comment on an article
+      parameters:
+      - name: id
+        in: path
+        description: ID of the article to comment on
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "123"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/id_comment_body'
+        required: true
+      responses:
+        "200":
+          description: Comment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_4'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404'
+      security:
+      - bearerAuth: []
+components:
+  schemas:
+    article:
+      allOf:
+      - required:
+        - body
+        - status
+        - title
+        type: object
+        properties:
+          id:
+            type: string
+            example: "12"
+          author:
+            type: string
+            example: "12545"
+          title:
+            type: string
+            example: new blog
+          cover:
+            type: string
+            format: url
+            example: https://www.google.com/imgres1
+          body:
+            type: string
+            example: blog description
+          status:
+            type: string
+            example: published
+            enum:
+            - draft
+            - published
+      - $ref: '#/components/schemas/Timestamps'
+    Comment:
+      required:
+      - author
+      - body
+      - id
+      - postId
+      - status
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the comment
+        body:
+          type: string
+          description: Text content of the comment
+        author:
+          type: integer
+        articleID:
+          type: integer
+        status:
+          type: string
+          example: public
+          enum:
+          - public
+          - private
+        timestamp:
+          type: string
+          format: date-time
+    AuthorDTO:
+      required:
+      - createdAt
+      - updatedAt
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 125
+        name:
+          type: string
+          example: M.H Hossen
+    Timestamps:
+      required:
+      - createdAt
+      - updatedAt
+      type: object
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 10
+        next:
+          type: integer
+          example: 2
+        prev:
+          type: integer
+        totalItems:
+          type: integer
+          example: 5
+        totalArticles:
+          type: integer
+          example: 47
+    auth_signup_body:
+      required:
+      - email
+      - name
+      - password
+      type: object
+      properties:
+        name:
+          type: string
+          example: jakir ali
+        email:
+          type: string
+          format: email
+          example: jakir@example.com
+        password:
+          type: string
+          format: password
+          example: pass123456
+    inline_response_201:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 201
+        message:
+          type: string
+          example: User created successfully
+        data:
+          $ref: '#/components/schemas/inline_response_201_data'
+        links:
+          $ref: '#/components/schemas/inline_response_201_links'
+    inline_response_400:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 400
+        error:
+          type: string
+          example: Invalid fields or missing something
+    inline_response_500:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 500
+        error:
+          type: string
+          example: "An unexpected error occurred,"
+    auth_signin_body:
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: jakir@example.com
+        password:
+          type: string
+          format: password
+          example: pass123456
+    inline_response_200:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: User authenticated successfully
+        data:
+          $ref: '#/components/schemas/inline_response_201_data'
+        links:
+          $ref: '#/components/schemas/inline_response_200_links'
+    inline_response_200_1:
+      type: object
+      properties:
+        articles:
+          type: array
+          items:
+            allOf:
+            - required:
+              - id
+              - title
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: abc123
+                title:
+                  type: string
+                  example: Article Title
+                cover:
+                  type: string
+                  example: https://www.google.com/imgres1
+                author:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: "23"
+                    name:
+                      type: string
+                      example: jakir-vai
+                links:
+                  type: string
+                  example: article/1
+            - $ref: '#/components/schemas/Timestamps'
+        pagination:
+          $ref: '#/components/schemas/pagination'
+    articles_body:
+      required:
+      - author
+      - body
+      - status
+      - title
+      type: object
+      properties:
+        author:
+          type: string
+          example: "12545"
+        title:
+          type: string
+          example: new blog
+        cover:
+          type: string
+          format: url
+          example: https://www.google.com/imgres1
+        body:
+          type: string
+          example: blog description
+        status:
+          type: string
+          enum:
+          - draft
+          - published
+    inline_response_201_1:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 201
+        message:
+          type: string
+          example: Article created successfully
+        data:
+          $ref: '#/components/schemas/article'
+        links:
+          $ref: '#/components/schemas/inline_response_201_1_links'
+    inline_response_401:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 401
+        message:
+          type: string
+          example: unauthorize to access
+    inline_response_200_2:
+      type: object
+      properties:
+        data:
+          allOf:
+          - $ref: '#/components/schemas/article'
+          - type: object
+            properties:
+              author:
+                $ref: '#/components/schemas/AuthorDTO'
+          - type: object
+            properties:
+              comment:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        links:
+          $ref: '#/components/schemas/inline_response_200_2_links'
+    inline_response_404:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: Resource not found
+    inline_response_200_3:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Oparetion Success
+        data:
+          $ref: '#/components/schemas/article'
+        links:
+          $ref: '#/components/schemas/inline_response_200_3_links'
+    articles_id_body:
+      type: object
+      properties:
+        title:
+          type: string
+          example: title demo
+        body:
+          type: string
+          example: body demo
+        cover:
+          type: string
+          format: url
+          example: https://www.google.com/imgres1
+        status:
+          type: string
+          example: published
+          enum:
+          - draft
+          - published
+    id_comment_body:
+      type: object
+      properties:
+        content:
+          type: string
+          description: The content of the comment
+          example: Great article!
+        author:
+          type: string
+          example: author123
+        articleId:
+          type: string
+          example: article123
+    inline_response_200_4:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+        links:
+          $ref: '#/components/schemas/inline_response_200_4_links'
+    inline_response_201_data:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: d5456g45156rty4r41th1t5gh4t8yh1g5a564fgs4156g4gdgdfgh465h48rty4r1tgtrh4
+    inline_response_201_links:
+      type: object
+      properties:
+        self:
+          type: string
+          example: /auth/signup
+        signin:
+          type: string
+          example: /auth/signin
+    inline_response_200_links:
+      type: object
+      properties:
+        self:
+          type: string
+          example: /auth/signin
+        profile:
+          type: string
+          example: /user/profile
+    inline_response_201_1_links:
+      type: object
+      properties:
+        self:
+          type: string
+          format: url
+          example: article/1/
+        author:
+          type: string
+          format: url
+          example: article/1/author
+        comment:
+          type: string
+          format: url
+          example: article/1/comment
+    inline_response_200_2_links:
+      type: object
+      properties:
+        self:
+          type: string
+          example: article/1
+        author:
+          type: string
+          example: article/1/author
+        comment:
+          type: string
+          example: article/1/comment
+    inline_response_200_3_links:
+      type: object
+      properties:
+        self:
+          type: string
+          example: article/1
+    inline_response_200_4_links:
+      type: object
+      properties:
+        self:
+          type: string
+          example: /articles/123/comment/456
+        article:
+          type: string
+          example: /articles/123
+  responses:
+    "500":
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_500'
+    "400":
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_400'
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_401'
+    "404":
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_404'
+  parameters:
+    page:
+      name: page
+      in: query
+      description: The current page number
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: integer
+        default: 1
+    limit:
+      name: limit
+      in: query
+      description: The number of objects to return
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: integer
+        default: 10
+    sortBy:
+      name: sortBy
+      in: query
+      description: Sort by ascending or descending (date)
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+        default: dsc
+        enum:
+        - asc
+        - dsc
+    search:
+      name: search
+      in: query
+      description: Return the filtered articles
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    idPathParams:
+      name: id
+      in: path
+      description: Article ID
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        example: "1"
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

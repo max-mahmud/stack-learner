@@ -1,0 +1,34 @@
+.test.js  .spec.js   __test__ folder inside js file
+
+[describe] => like a parent or wrapper or div
+[it ]  => use instead of test, use inside describe
+[render] => whice file want to render 
+[screen] => means dom element
+[expect] => means what we expect from screen element
+[fireEvent] => links oneClick , oneChange , drag, mouseEnter etc
+[waitFor] => take time for setTimeout
+
+1. querybyText return null
+2. getBy  return error
+3. findBy return error and use await 
+
+1.beforeAll
+2.beforeEach
+3.afterAll
+4.afterEach
+
+1.  getByText => text name
+2.  getByRole => tag name
+3.  getByPlaceholder =>placeholder
+4.  getByTestID =>data-testid
+5.  getByAltText => img alt
+6   getByLabelText => input lebel
+7.  getByTitle => button tittle name
+
+* Mock => doing mock function for use demo api instead real api ,
+        to save save time and cost
+
+* Snapshots => to check any changed
+* OverRide data-testid by using configure
+
+* Text Match => {exact: false} or Regex(/text/i) => i means not case sensitive and (/ /) means includes

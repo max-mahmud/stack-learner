@@ -1,0 +1,21 @@
+PATCH http://localhost:4000/api/v2/articles/65d822d6a7e4e4798b235644
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZDgxNmY0OTQ2ZjFlYTQ2YzI4ZDlkMCIsIm5hbWUiOiJqYWtpciBhbGkiLCJlbWFpbCI6Impha2lyQGV4YW1wbGUuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3MDg2NjY0NDUsImV4cCI6MTcwODY3MDA0NX0.5NbWXj0Aq56sriRa4MpflOj5xexidsevy_lkC3c9wAc
+
+[
+  { "op": "replace", "path": "/title", "value": "JSON Patch" },
+  { "op": "replace", "path": "/body", "value": "Updated body using json patch" },
+  { "op": "add", "path": "test", "value":"test Property" },
+  { "op": "add", "path": "Money", "value": 35000 }
+]
+
+
+### 
+
+POST http://localhost:4000/api/v1/auth/signin
+Content-Type:  application/json
+
+{
+  "email":"jakir@example.com",
+  "password":"pass123456"
+}
